@@ -49,11 +49,24 @@ struct Rct {
     float width = 0;
     float rotation = 0;
 
+    Rct() = default;
+    Rct(float x, float y, float h, float w, float r) : x(x), y(y), height(h), width(w), rotation(r) {}
+    Rct(sf::RectangleShape r) {
+        auto pos = r.getPosition();
+        auto size = r.getSize();
+        x = pos.x;
+        y = pos.y;
+        width = size.x;
+        height = size.y;
+        rotation = r.getRotation();
+    }
+
     Vec2 endpoint()
     {
         float theta = radians(rotation);
         return {x + width*cosf(theta) - height*sinf(theta), y + width*sinf(theta) + height*cosf(theta)};
     }
+    /*
     std::vector<Vec2> corners()
     {
         Vec2 pos = {x,y};
@@ -66,6 +79,18 @@ struct Rct {
         Vec2 c3 = Vec2(c2 - center).rotate(rotation) + center;
 
         return {c0, c1, c2, c3};
+    }*/
+    std::vector<Vec2> corners()
+    {
+        Vec2 pos = {x,y};
+        float theta = radians(rotation);
+
+        Vec2 c0 = pos;
+        Vec2 c1 = {x + width*cosf(theta),y + width*sinf(theta)};
+        Vec2 c2 = {x - height*sinf(theta), y + height*cosf(theta)};
+        Vec2 c3 = endpoint();
+
+        return std::vector{c0, c1, c2, c3};
     }
     void toRectShape(sf::RectangleShape &r)
     {
@@ -83,15 +108,20 @@ struct Rct {
 
 struct Point : public sf::Drawable {
     float x, y;
+    sf::Color col = sf::Color::White;
 
     Point(Vec2 v) : x(v.x), y(v.y) {}
+    Point(Vec2 v, sf::Color c) : x(v.x), y(v.y), col(c) {}
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         sf::CircleShape c;
-        c.setPosition(x, y);
         c.setRadius(10);
-        c.setFillColor(sf::Color::Blue);
+        auto lb = c.getLocalBounds().getSize();
+        c.setPosition(x - lb.x/2.f, y - lb.y/2.f);
+        // cool 3d effect
+        //c.setPosition(x - lb.x/2.f, y/2.f);
+        c.setFillColor(col);
 
         target.draw(c, states);
     }
@@ -100,15 +130,15 @@ struct Point : public sf::Drawable {
 
 std::vector<Vec2> getRotatedCorners(const sf::RectangleShape &r)
 {
-    sf::Vector2f dir = {cosf(radians(r.getRotation())), sinf(radians(r.getRotation()))};
-    sf::Vector2f halfSize = r.getSize() / 2.f;
-    sf::Vector2f c = r.getPosition() + halfSize;
+    float theta = radians(r.getRotation());
+    Vec2 pos = r.getPosition();
+    Vec2 size = r.getSize();
 
     std::vector<Vec2> corners = {
-        {c.x + dir.x * halfSize.x - dir.y * halfSize.y, c.y + dir.y * halfSize.x + dir.x * halfSize.y}, // Top-right
-        {c.x - dir.x * halfSize.x - dir.y * halfSize.y, c.y - dir.y * halfSize.x + dir.x * halfSize.y}, // Top-left
-        {c.x - dir.x * halfSize.x + dir.y * halfSize.y, c.y - dir.y * halfSize.x - dir.x * halfSize.y}, // Bottom-left
-        {c.x + dir.x * halfSize.x + dir.y * halfSize.y, c.y + dir.y * halfSize.x - dir.x * halfSize.y}  // Bottom-right
+        pos,
+        {pos.x + size.x*cosf(theta),pos.y + size.x*sinf(theta)},
+        {pos.x - size.y*sinf(theta), pos.y + size.y*cosf(theta)},
+        {pos.x + size.x*cosf(theta) - size.y*sinf(theta), pos.y + size.x*sinf(theta) + size.y*cosf(theta)},
     };
 
     return corners;
@@ -155,9 +185,12 @@ bool colliding = false;
 
 void draw_corners(sf::RectangleShape &r)
 {
+    Rct rc(r);
+    auto vc = rc.corners();
     auto v = getRotatedCorners(r);
-    for (auto i : v) {
-        window.draw(Point(i));
+    for (unsigned long i = 0; i < v.size(); i++) {
+        window.draw(Point(vc[i], sf::Color::Blue));
+        window.draw(Point(v[i], sf::Color::White));
     }
 }
 
