@@ -1,0 +1,128 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-I/home/dawid/.local/lib/SFML-2.6.2/include",
+      "-I/home/dawid/proj/collisiontest/src/imgui",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-pedantic",
+      "-c",
+      "-o",
+      "CMakeFiles/main.dir/src/main.cpp.o",
+      "/home/dawid/proj/collisiontest/src/main.cpp"
+    ],
+    "directory": "/home/dawid/proj/collisiontest/build",
+    "file": "/home/dawid/proj/collisiontest/src/main.cpp",
+    "output": "/home/dawid/proj/collisiontest/build/CMakeFiles/main.dir/src/main.cpp.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-I/home/dawid/.local/lib/SFML-2.6.2/include",
+      "-I/home/dawid/proj/collisiontest/src/imgui",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-pedantic",
+      "-c",
+      "-o",
+      "CMakeFiles/main.dir/src/imgui/imgui.cpp.o",
+      "/home/dawid/proj/collisiontest/src/imgui/imgui.cpp"
+    ],
+    "directory": "/home/dawid/proj/collisiontest/build",
+    "file": "/home/dawid/proj/collisiontest/src/imgui/imgui.cpp",
+    "output": "/home/dawid/proj/collisiontest/build/CMakeFiles/main.dir/src/imgui/imgui.cpp.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-I/home/dawid/.local/lib/SFML-2.6.2/include",
+      "-I/home/dawid/proj/collisiontest/src/imgui",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-pedantic",
+      "-c",
+      "-o",
+      "CMakeFiles/main.dir/src/imgui/imgui_demo.cpp.o",
+      "/home/dawid/proj/collisiontest/src/imgui/imgui_demo.cpp"
+    ],
+    "directory": "/home/dawid/proj/collisiontest/build",
+    "file": "/home/dawid/proj/collisiontest/src/imgui/imgui_demo.cpp",
+    "output": "/home/dawid/proj/collisiontest/build/CMakeFiles/main.dir/src/imgui/imgui_demo.cpp.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-I/home/dawid/.local/lib/SFML-2.6.2/include",
+      "-I/home/dawid/proj/collisiontest/src/imgui",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-pedantic",
+      "-c",
+      "-o",
+      "CMakeFiles/main.dir/src/imgui/imgui_draw.cpp.o",
+      "/home/dawid/proj/collisiontest/src/imgui/imgui_draw.cpp"
+    ],
+    "directory": "/home/dawid/proj/collisiontest/build",
+    "file": "/home/dawid/proj/collisiontest/src/imgui/imgui_draw.cpp",
+    "output": "/home/dawid/proj/collisiontest/build/CMakeFiles/main.dir/src/imgui/imgui_draw.cpp.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-I/home/dawid/.local/lib/SFML-2.6.2/include",
+      "-I/home/dawid/proj/collisiontest/src/imgui",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-pedantic",
+      "-c",
+      "-o",
+      "CMakeFiles/main.dir/src/imgui/imgui_tables.cpp.o",
+      "/home/dawid/proj/collisiontest/src/imgui/imgui_tables.cpp"
+    ],
+    "directory": "/home/dawid/proj/collisiontest/build",
+    "file": "/home/dawid/proj/collisiontest/src/imgui/imgui_tables.cpp",
+    "output": "/home/dawid/proj/collisiontest/build/CMakeFiles/main.dir/src/imgui/imgui_tables.cpp.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-I/home/dawid/.local/lib/SFML-2.6.2/include",
+      "-I/home/dawid/proj/collisiontest/src/imgui",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-pedantic",
+      "-c",
+      "-o",
+      "CMakeFiles/main.dir/src/imgui/imgui_widgets.cpp.o",
+      "/home/dawid/proj/collisiontest/src/imgui/imgui_widgets.cpp"
+    ],
+    "directory": "/home/dawid/proj/collisiontest/build",
+    "file": "/home/dawid/proj/collisiontest/src/imgui/imgui_widgets.cpp",
+    "output": "/home/dawid/proj/collisiontest/build/CMakeFiles/main.dir/src/imgui/imgui_widgets.cpp.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-I/home/dawid/.local/lib/SFML-2.6.2/include",
+      "-I/home/dawid/proj/collisiontest/src/imgui",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-pedantic",
+      "-c",
+      "-o",
+      "CMakeFiles/main.dir/src/imgui/imgui-SFML.cpp.o",
+      "/home/dawid/proj/collisiontest/src/imgui/imgui-SFML.cpp"
+    ],
+    "directory": "/home/dawid/proj/collisiontest/build",
+    "file": "/home/dawid/proj/collisiontest/src/imgui/imgui-SFML.cpp",
+    "output": "/home/dawid/proj/collisiontest/build/CMakeFiles/main.dir/src/imgui/imgui-SFML.cpp.o"
+  }
+]
