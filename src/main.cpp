@@ -9,7 +9,8 @@
 #include <SFML/Graphics.hpp>
 
 #include <algorithm>
-#include <cstddef>
+#include <cassert>
+#include <cstdlib>
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include <vector>
@@ -25,7 +26,7 @@ void do_imgui(sf::RectangleShape &r1, sf::RectangleShape &r2);;
 
 sf::Clock deltaClock;
 
-struct Vec2 : public sf::Vector2f {
+struct Vec2 {
     float x;
     float y;
 
@@ -34,6 +35,12 @@ struct Vec2 : public sf::Vector2f {
 
     Vec2 operator-(Vec2 other) const {
         return {x-other.x, y-other.y};
+    }
+    Vec2 add(Vec2 rhs) const {
+        return Vec2(x + rhs.x, y + rhs.y);
+    }
+    Vec2 sub(Vec2 rhs) const {
+        return Vec2(x - rhs.x, y - rhs.y);
     }
     float dot(const Vec2& other) const { return x * other.x + y * other.y; }
     Vec2 perpendicular() const { return {-y, x}; }
@@ -119,6 +126,30 @@ struct Point : public sf::Drawable {
     }
 };
 
+struct Interval {
+    float min, max;
+    bool init = false;
+
+    Interval() : min(0), max(0), init(false) {}
+    Interval(float min, float max) : min(min), max(max), init(true) {}
+    Interval(float x) : min(x), max(x), init(true) {}
+
+    void add(float x) {
+        if (!init) {
+            min = x;
+            max = x;
+            init = true;
+        } else if (x < min) {
+            min = x;
+        } else if (x > max) {
+            max = x;
+        }
+    }
+    bool overlap(Interval i) {
+        return std::max(min, i.min) <= std::min(max, i.max);
+    }
+};
+
 
 std::vector<Vec2> getRotatedCorners(const sf::RectangleShape &r)
 {
@@ -149,33 +180,36 @@ std::pair<float, float> projectOntoAxis(const std::vector<Vec2>& points, const V
     return {min, max};
 }
 
+float rotateX(Vec2 v, float theta)
+{
+    return v.x*cosf(theta) - v.y*sinf(theta);
+}
+
+bool project_over(std::vector<Vec2> corners, Vec2 origin, float theta, float w)
+{
+    Interval projected;
+    for (int i = 0; i < 4; i++) {
+        projected.add(rotateX(corners[i].sub(origin), theta));
+    }
+    return projected.overlap(Interval(0, w));
+}
+
 bool collides(const sf::RectangleShape &r1, const sf::RectangleShape &r2)
 {
-    auto corners1 = getRotatedCorners(r1);
-    auto corners2 = getRotatedCorners(r2);
+    std::vector<Vec2> corners1 = getRotatedCorners(r1);
+    std::vector<Vec2> corners2 = getRotatedCorners(r2);
+    float theta1  = radians(-r1.getRotation());
+    float theta11 = radians(-90 - r1.getRotation());
+    float theta2  = radians(-r2.getRotation());
+    float theta21 = radians(-90 - r2.getRotation());
 
-    std::vector<Vec2> axes = {
-        corners1[1] - corners1[0],
-        corners1[2] - corners1[1],
-        corners1[3] - corners1[2],
-        corners1[0] - corners1[3],
+    bool ret =
+        project_over(corners2, corners1[0], theta1, r1.getSize().x) &&
+        project_over(corners2, corners1[0], theta11, r1.getSize().y) &&
+        project_over(corners1, corners2[0], theta2, r2.getSize().x) &&
+        project_over(corners1, corners2[0], theta21, r2.getSize().y);
 
-        corners2[1] - corners2[0],
-        corners2[2] - corners2[1],
-        corners2[3] - corners2[2],
-        corners2[0] - corners2[3],
-    };
-
-    for (const Vec2& axis : axes) {
-        auto minmax1 = projectOntoAxis(corners1, axis);
-        auto minmax2 = projectOntoAxis(corners2, axis);
-
-        if (minmax1.second < minmax2.first || minmax2.second < minmax2.first) {
-            return false;
-        }
-    }
-
-    return true;
+    return ret;
 }
 
 sf::RenderWindow window;
@@ -234,8 +268,8 @@ int main()
         window.clear();
         window.draw(r1);
         window.draw(r2);
-        draw_corners(r1);
-        draw_corners(r2);
+        //draw_corners(r1);
+        //draw_corners(r2);
         ImGui::SFML::Render(window);
         window.display();
     }
