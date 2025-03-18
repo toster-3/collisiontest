@@ -8,10 +8,13 @@
 #include "SFML/Window/Event.hpp"
 #include <SFML/Graphics.hpp>
 
+#include <algorithm>
+#include <cstddef>
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include <vector>
 #include <cmath>
+#include <utility>
 
 #define PI_OVER_180 0.01745329251994329576
 float radians(float x)
@@ -29,6 +32,9 @@ struct Vec2 : public sf::Vector2f {
     Vec2(float x, float y) : x(x), y(y) {}
     Vec2(sf::Vector2f v) : x(v.x), y(v.y) {}
 
+    Vec2 operator-(Vec2 other) const {
+        return {x-other.x, y-other.y};
+    }
     float dot(const Vec2& other) const { return x * other.x + y * other.y; }
     Vec2 perpendicular() const { return {-y, x}; }
     Vec2 normalized() const {
@@ -66,20 +72,6 @@ struct Rct {
         float theta = radians(rotation);
         return {x + width*cosf(theta) - height*sinf(theta), y + width*sinf(theta) + height*cosf(theta)};
     }
-    /*
-    std::vector<Vec2> corners()
-    {
-        Vec2 pos = {x,y};
-        Vec2 center = (pos + endpoint())/2.f;
-        Vec2 tmp = pos - center;
-
-        Vec2 c0 = pos;
-        Vec2 c1 = Vec2(c0 - center).rotate(rotation) + center;
-        Vec2 c2 = Vec2(c1 - center).rotate(rotation) + center;
-        Vec2 c3 = Vec2(c2 - center).rotate(rotation) + center;
-
-        return {c0, c1, c2, c3};
-    }*/
     std::vector<Vec2> corners()
     {
         Vec2 pos = {x,y};
@@ -144,13 +136,17 @@ std::vector<Vec2> getRotatedCorners(const sf::RectangleShape &r)
     return corners;
 }
 
-void projectOntoAxis(const std::vector<Vec2>& corners, const Vec2& axis, float& min, float& max) {
-    min = max = corners[0].dot(axis);
-    for (size_t i = 1; i < corners.size(); i++) {
-        float projection = corners[i].dot(axis);
-        if (projection < min) min = projection;
-        if (projection > max) max = projection;
+std::pair<float, float> projectOntoAxis(const std::vector<Vec2>& points, const Vec2& axis)
+{
+    float dot = points[0].dot(axis);
+    float min = points[0].dot(axis), max = points[0].dot(axis);
+    for (size_t i = 1; i < points.size(); i++) {
+        dot = points[i].dot(axis);
+        min = std::min(dot, min);
+        max = std::max(dot, min);
     }
+
+    return {min, max};
 }
 
 bool collides(const sf::RectangleShape &r1, const sf::RectangleShape &r2)
@@ -159,19 +155,23 @@ bool collides(const sf::RectangleShape &r1, const sf::RectangleShape &r2)
     auto corners2 = getRotatedCorners(r2);
 
     std::vector<Vec2> axes = {
-        Vec2(corners1[1] - corners1[0]).perpendicular().normalized(),
-        Vec2(corners1[3] - corners1[0]).perpendicular().normalized(),
-        Vec2(corners2[1] - corners2[0]).perpendicular().normalized(),
-        Vec2(corners2[3] - corners2[0]).perpendicular().normalized(),
+        corners1[1] - corners1[0],
+        corners1[2] - corners1[1],
+        corners1[3] - corners1[2],
+        corners1[0] - corners1[3],
+
+        corners2[1] - corners2[0],
+        corners2[2] - corners2[1],
+        corners2[3] - corners2[2],
+        corners2[0] - corners2[3],
     };
 
     for (const Vec2& axis : axes) {
-        float min1, max1, min2, max2;
-        projectOntoAxis(corners1, axis, min1, max1);
-        projectOntoAxis(corners2, axis, min2, max2);
+        auto minmax1 = projectOntoAxis(corners1, axis);
+        auto minmax2 = projectOntoAxis(corners2, axis);
 
-        if (max1 < min2 || max2 < min1) {
-            return false; // No overlap -> No collision
+        if (minmax1.second < minmax2.first || minmax2.second < minmax2.first) {
+            return false;
         }
     }
 
