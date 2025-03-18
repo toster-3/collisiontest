@@ -241,7 +241,7 @@ int main()
     r2.setFillColor(sf::Color::Green);
 
 
-    window.create({1920, 1080}, "ImGui + SFML = <3");
+    window.create({1920, 1080}, "Kolizje bruh");
     window.setFramerateLimit(60);
     if (!ImGui::SFML::Init(window))
         return -1;
@@ -326,12 +326,15 @@ void do_imgui(sf::RectangleShape &r1, sf::RectangleShape &r2)
     }
 
 
-    ImGui::ShowDemoWindow();
     ImGui::Begin("collisions");
     ImGui::Text("r1: (%g, %g, %g, %g, %g)", rc1.x, rc1.y, rc1.width, rc1.height, rc1.rotation);
     ImGui::Text("r2: (%g, %g, %g, %g, %g)", rc2.x, rc2.y, rc2.width, rc2.height, rc2.rotation);
     ImGui::Text("mouse: (%g, %g)", mousepos.x, mousepos.y);
-    ImGui::Text("collides? : %s", colliding ? "yes" : "no");
+    ImGui::Text("colliding?"); ImGui::SameLine();
+    if (colliding)
+        ImGui::TextColored(ImVec4(0.f,1.f,0.f,1.f), "YES");
+    else
+        ImGui::TextColored(ImVec4(1.f,0.f,0.f,1.f), "NO");
 
     ImGui::SeparatorText("r1");
     ImGui::DragFloat("x##r1", &rc1.x);
